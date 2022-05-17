@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::hash;
 use std::thread;
 use std::time::Duration;
 
@@ -9,26 +10,30 @@ fn main() {
     generate_workout(sim_intensity, sim_random_number);
 }
 
-struct Cacher<T>
+struct Cacher<Calc, Arg, Return>
 where
-    T: Fn(u32) -> u32,
+    Arg: Copy + Eq + hash::Hash,
+    Calc: Fn(Arg) -> Return,
+    Return: Copy,
 {
-    calculation: T,
-    values: HashMap<u32, u32>,
+    calculation: Calc,
+    values: HashMap<Arg, Return>,
 }
 
-impl<T> Cacher<T>
+impl<Calc, Arg, Return> Cacher<Calc, Arg, Return>
 where
-    T: Fn(u32) -> u32,
+    Arg: Copy + Eq + hash::Hash,
+    Calc: Fn(Arg) -> Return,
+    Return: Copy,
 {
-    fn new(calculation: T) -> Cacher<T> {
+    fn new(calculation: Calc) -> Cacher<Calc, Arg, Return> {
         Cacher {
             values: HashMap::new(),
             calculation,
         }
     }
 
-    fn value(&mut self, arg: u32) -> u32 {
+    fn value(&mut self, arg: Arg) -> Return {
         match self.values.get(&arg) {
             Some(v) => *v,
             None => {
@@ -65,6 +70,16 @@ fn call_with_different_values() {
 
     let _v1 = c.value(1);
     let v2 = c.value(2);
+
+    assert_eq!(v2, 2);
+}
+
+#[test]
+fn call_with_different_types() {
+    let mut c = Cacher::new(|a: &str| a.len());
+
+    let _v1 = c.value("string");
+    let v2 = c.value("hi");
 
     assert_eq!(v2, 2);
 }
