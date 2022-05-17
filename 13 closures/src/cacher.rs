@@ -41,22 +41,34 @@ mod tests {
     use super::*;
 
     #[test]
-    fn call_with_different_values() {
+    fn returns_value() {
         let mut c = Cacher::new(|a| a);
-
         c.value(1);
-        let v2 = c.value(2);
 
-        assert_eq!(v2, 2);
+        assert_eq!(c.value(1), 1);
     }
 
     #[test]
-    fn call_with_different_types() {
+    fn caches() {
+        let mut c = Cacher::new(|_a| rand::random::<u32>());
+        let val = c.value(1);
+
+        assert_eq!(c.value(1), val);
+    }
+
+    #[test]
+    fn handles_multiple_values() {
+        let mut c = Cacher::new(|a| a);
+        c.value(1);
+
+        assert_eq!(c.value(2), 2);
+    }
+
+    #[test]
+    fn handles_multiple_types() {
         let mut c = Cacher::new(|a: &str| a.len());
-
         c.value("string");
-        let v2 = c.value("hi");
 
-        assert_eq!(v2, 2);
+        assert_eq!(c.value("hi"), 2);
     }
 }
