@@ -1,11 +1,8 @@
 use smart_pointers::linked_list;
+use smart_pointers::my_box;
 
 fn main() {
     linked_list::demo();
-
-    let x = 5;
-    let y = Box::new(x);
-
-    assert_eq!(5, x);
-    assert_eq!(5, *y);
+    my_box::deref_demo();
+    my_box::implicit_deref_demo();
 }
