@@ -1,0 +1,1 @@
+/home/robert/development/tmp/learn_rust/12\ grep\ project/target/debug/minigrep: /home/robert/development/tmp/learn_rust/12\ grep\ project/src/lib.rs /home/robert/development/tmp/learn_rust/12\ grep\ project/src/main.rs
